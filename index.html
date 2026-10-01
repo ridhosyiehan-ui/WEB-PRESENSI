@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presensi Kelas 10</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f5f9;
+    color: #222;
+}
+
+header {
+    background: #2563eb;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 7px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 15px;
+}
+
+.panel {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    margin-bottom: 20px;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 9px;
+    font-size: 15px;
+}
+
+.search {
+    margin-top: 12px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.summary-box {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,.07);
+}
+
+.summary-box h3 {
+    font-size: 14px;
+    color: #666;
+}
+
+.summary-box p {
+    font-size: 25px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.student {
+    background: white;
+    border-radius: 13px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-info {
+    flex: 1;
+}
+
+.code {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2563eb;
+    letter-spacing: 2px;
+}
+
+.name {
+    font-size: 16px;
+    margin-top: 3px;
+}
+
+.number {
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.buttons {
+    display: flex;
+    gap: 7px;
+}
+
+button {
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.hadir {
+    background: #22c55e;
+    color: white;
+}
+
+.tidak {
+    background: #ef4444;
+    color: white;
+}
+
+.reset {
+    background: #555;
+    color: white;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.active {
+    outline: 3px solid rgba(0,0,0,.15);
+}
+
+.empty {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: 12px;
+    color: #777;
+}
+
+@media (max-width: 650px) {
+    .controls {
+        grid-template-columns: 1fr;
+    }
+
+    .summary {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .student {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .buttons {
+        width: 100%;
+    }
+
+    .buttons button {
+        flex: 1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📋 PRESENSI KELAS 10</h1>
+    <p>X-1 sampai X-12</p>
+</header>
+
+<div class="container">
+
+    <div class="panel">
+
+        <div class="controls">
+
+            <div>
+                <label><b>Pilih Kelas</b></label>
+                <select id="kelas" onchange="tampilkanSiswa()">
+                    <option value="X-1">X-1</option>
+                    <option value="X-2">X-2</option>
+                    <option value="X-3">X-3</option>
+                    <option value="X-4">X-4</option>
+                    <option value="X-5">X-5</option>
+                    <option value="X-6">X-6</option>
+                    <option value="X-7">X-7</option>
+                    <option value="X-8">X-8</option>
+                    <option value="X-9">X-9</option>
+                    <option value="X-10">X-10</option>
+                    <option value="X-11">X-11</option>
+                    <option value="X-12">X-12</option>
+                </select>
+            </div>
+
+            <div>
+                <label><b>Tanggal</b></label>
+                <input type="date" id="tanggal" onchange="tampilkanSiswa()">
+            </div>
+
+        </div>
+
+        <div class="search">
+            <input
+                type="text"
+                id="search"
+                placeholder="🔎 Cari 3 huruf awal atau nama lengkap..."
+                oninput="tampilkanSiswa()"
+            >
+        </div>
+
+    </div>
+
+    <div class="summary">
+
+        <div class="summary-box">
+            <h3>Total Siswa</h3>
+            <p id="total">0</p>
+        </div>
+
+        <div class="summary-box">
+            <h3>Hadir</h3>
+            <p id="jumlahHadir">0</p>
+        </div>
+
+        <div class="summary-box">
+            <h3>Tidak Hadir</h3>
+            <p id="jumlahTidakHadir">0</p>
+        </div>
+
+    </div>
+
+    <div id="daftarSiswa"></div>
+
+    <div class="panel">
+        <button class="reset" onclick="resetPresensi()">
+            🔄 Reset Presensi Hari Ini
+        </button>
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   DATA SISWA
+   12 KELAS × 40 SISWA
+========================================= */
+
+const dataSiswa = {};
+
+const namaDepan = [
+    "Ahmad",
+    "Andi",
+    "Bagas",
+    "Bima",
+    "Cahyo",
+    "Daffa",
+    "Dimas",
+    "Fajar",
+    "Farhan",
+    "Galih",
+    "Hafiz",
+    "Ilham",
+    "Jovan",
+    "Kevin",
+    "Lutfi",
+    "Miko",
+    "Naufal",
+    "Raka",
+    "Rizky",
+    "Satria",
+    "Tegar",
+    "Wahyu",
+    "Yusuf",
+    "Zaki",
+    "Adit",
+    "Arif",
+    "Bayu",
+    "Dani",
+    "Eko",
+    "Fikri",
+    "Gilang",
+    "Hendra",
+    "Iqbal",
+    "Krisna",
+    "Maulana",
+    "Nanda",
+    "Rafi",
+    "Reza",
+    "Rian",
+    "Yoga"
+];
+
+const namaBelakang = [
+    "Saputra",
+    "Pratama",
+    "Wijaya",
+    "Setiawan",
+    "Nugraha",
+    "Ramadhan",
+    "Permana",
+    "Kurniawan",
+    "Firmansyah",
+    "Hidayat",
+    "Santoso",
+    "Wibowo",
+    "Hakim",
+    "Maulana",
+    "Putra",
+    "Suryana",
+    "Gunawan",
+    "Akbar",
+    "Fauzan",
+    "Irawan",
+    "Syahputra",
+    "Aditya",
+    "Kusuma",
+    "Pamungkas",
+    "Prakoso",
+    "Hermawan",
+    "Setiaji",
+    "Anggara",
+    "Nugroho",
+    "Purnama",
+    "Utomo",
+    "Suhendra",
+    "Cahyono",
+    "Iskandar",
+    "Mahendra",
+    "Sulaiman",
+    "Prabowo",
+    "Wicaksono",
+    "Ferdian",
+    "Ardiansyah"
+];
+
+
+/* Membuat 12 kelas */
+
+for (let kelas = 1; kelas <= 12; kelas++) {
+
+    dataSiswa[`X-${kelas}`] = [];
+
+    for (let i = 0; i < 40; i++) {
+
+        let depan = namaDepan[i];
+
+        let belakangIndex = (i + kelas - 1) % namaBelakang.length;
+
+        let belakang = namaBelakang[belakangIndex];
+
+        dataSiswa[`X-${kelas}`].push({
+            id: i + 1,
+            nama: `${depan} ${belakang}`
+        });
+
+    }
+
+}
+
+
+/* =========================================
+   3 HURUF AWAL
+========================================= */
+
+function tigaHuruf(nama) {
+
+    return nama
+        .replace(/[^a-zA-Z]/g, "")
+        .substring(0, 3)
+        .toUpperCase();
+
+}
+
+
+/* =========================================
+   TANGGAL HARI INI
+========================================= */
+
+const tanggalInput = document.getElementById("tanggal");
+
+const hariIni = new Date();
+
+tanggalInput.value =
+    hariIni.getFullYear() +
+    "-" +
+    String(hariIni.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(hariIni.getDate()).padStart(2, "0");
+
+
+/* =========================================
+   TAMPILKAN SISWA
+========================================= */
+
+function tampilkanSiswa() {
+
+    const kelas = document.getElementById("kelas").value;
+
+    const tanggal = document.getElementById("tanggal").value;
+
+    const search = document
+        .getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const daftar = document.getElementById("daftarSiswa");
+
+    daftar.innerHTML = "";
+
+    let jumlahHadir = 0;
+    let jumlahTidakHadir = 0;
+
+    const siswaKelas = dataSiswa[kelas];
+
+    const siswaFilter = siswaKelas.filter(siswa => {
+
+        const kode = tigaHuruf(siswa.nama).toLowerCase();
+
+        const nama = siswa.nama.toLowerCase();
+
+        return kode.includes(search) || nama.includes(search);
+
+    });
+
+
+    siswaKelas.forEach((siswa, index) => {
+
+        const key =
+            `presensi_${kelas}_${tanggal}_${siswa.id}`;
+
+        const status =
+            localStorage.getItem(key) || "";
+
+
+        if (status === "Hadir") {
+            jumlahHadir++;
+        }
+
+        if (status === "Tidak Hadir") {
+            jumlahTidakHadir++;
+        }
+
+    });
+
+
+    siswaFilter.forEach(siswa => {
+
+        const key =
+            `presensi_${kelas}_${tanggal}_${siswa.id}`;
+
+        const status =
+            localStorage.getItem(key) || "";
+
+
+        const div = document.createElement("div");
+
+        div.className = "student";
+
+
+        div.innerHTML = `
+
+            <div class="student-info">
+
+                <div class="number">
+                    No. ${siswa.id}
+                </div>
+
+                <div class="code">
+                    ${tigaHuruf(siswa.nama)}
+                </div>
+
+                <div class="name">
+                    ${siswa.nama}
+                </div>
+
+            </div>
+
+            <div class="buttons">
+
+                <button
+                    class="hadir ${status === "Hadir" ? "active" : ""}"
+                    onclick="setStatus('${kelas}', '${tanggal}', ${siswa.id}, 'Hadir')">
+                    ✓ Hadir
+                </button>
+
+                <button
+                    class="tidak ${status === "Tidak Hadir" ? "active" : ""}"
+                    onclick="setStatus('${kelas}', '${tanggal}', ${siswa.id}, 'Tidak Hadir')">
+                    ✕ Tidak Hadir
+                </button>
+
+            </div>
+
+        `;
+
+        daftar.appendChild(div);
+
+    });
+
+
+    if (siswaFilter.length === 0) {
+
+        daftar.innerHTML = `
+            <div class="empty">
+                Siswa tidak ditemukan.
+            </div>
+        `;
+
+    }
+
+
+    document.getElementById("total").textContent =
+        siswaKelas.length;
+
+    document.getElementById("jumlahHadir").textContent =
+        jumlahHadir;
+
+    document.getElementById("jumlahTidakHadir").textContent =
+        jumlahTidakHadir;
+
+}
+
+
+/* =========================================
+   SIMPAN STATUS
+========================================= */
+
+function setStatus(kelas, tanggal, id, status) {
+
+    const key =
+        `presensi_${kelas}_${tanggal}_${id}`;
+
+    localStorage.setItem(key, status);
+
+    tampilkanSiswa();
+
+}
+
+
+/* =========================================
+   RESET
+========================================= */
+
+function resetPresensi() {
+
+    const kelas =
+        document.getElementById("kelas").value;
+
+    const tanggal =
+        document.getElementById("tanggal").value;
+
+
+    if (
+        !confirm(
+            `Hapus semua data presensi ${kelas} pada tanggal ${tanggal}?`
+        )
+    ) {
+        return;
+    }
+
+
+    dataSiswa[kelas].forEach(siswa => {
+
+        const key =
+            `presensi_${kelas}_${tanggal}_${siswa.id}`;
+
+        localStorage.removeItem(key);
+
+    });
+
+
+    tampilkanSiswa();
+
+}
+
+
+/* =========================================
+   TAMPILKAN PERTAMA KALI
+========================================= */
+
+tampilkanSiswa();
+
+</script>
+
+</body>
+</html>
